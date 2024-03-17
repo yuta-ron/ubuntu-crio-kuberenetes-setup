@@ -1,0 +1,150 @@
+---
+- name: Kubernetes setup playbook
+  hosts: localhost
+  connection: local
+  become: yes
+  vars:
+    os: "xUbuntu_22.04"
+    crio_version: "1.24"
+    kubernetes_version: "v1.29"
+
+  tasks:
+    - name: Add CRI-O repository keys
+      apt_key:
+        url: "{{ item }}"
+        state: present
+      loop:
+        - "https://download.opensuse.org/repositories/devel:kubic:libcontainers:stable:cri-o:{{ crio_version }}/{{ os }}/Release.key"
+        - "https://download.opensuse.org/repositories/devel:kubic:libcontainers:stable/{{ os }}/Release.key"
+
+    - name: Add CRI-O repositories
+      apt_repository:
+        repo: "{{ item }}"
+        state: present
+      loop:
+        - "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/{{ os }}/ /"
+        - "deb http://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/{{ crio_version }}/{{ os }}/ /"
+
+    - name: Install cri-o and cri-o-runc
+      apt:
+        name:
+          - cri-o
+          - cri-o-runc
+        state: present
+        update_cache: yes
+
+    - name: Replace crio.conf
+      copy:
+        src: ./crio.conf
+        dest: /etc/crio/crio.conf
+
+    - name: Install Container Networking Plugins
+      apt:
+        name: containernetworking-plugins
+        state: present
+
+    - name: Rename the default CNI configuration
+      command: mv /etc/cni/net.d/100-crio-bridge.conf /etc/cni/net.d/100-crio-bridge.conf.org
+      args:
+        creates: /etc/cni/net.d/100-crio-bridge.conf.org
+
+    - name: Download and set up the CRI-O bridge network configuration
+      get_url:
+        url: "https://raw.githubusercontent.com/cri-o/cri-o/main/contrib/cni/11-crio-ipv4-bridge.conflist"
+        dest: "/etc/cni/net.d/11-crio-ipv4-bridge.conf"
+
+    - name: Start and enable CRI-O service
+      systemd:
+        name: crio
+        state: started
+        enabled: yes
+
+    - name: Install cri-tools
+      apt:
+        name: cri-tools
+        state: present
+
+    - name: Set up crictl auto-completion
+      shell: crictl completion | sudo tee /etc/bash_completion.d/crictl
+      args:
+        executable: /bin/bash
+
+    - name: Add modules to /etc/modules-load.d/k8s.conf
+      blockinfile:
+        path: /etc/modules-load.d/k8s.conf
+        create: yes
+        block: |
+          overlay
+          br_netfilter
+        state: present
+
+    - name: Load required kernel modules
+      modprobe:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - overlay
+        - br_netfilter
+
+    - name: Ensure required sysctl settings are persistent
+      sysctl:
+        name: "{{ item.key }}"
+        value: "{{ item.value }}"
+        state: present
+        reload: yes
+      loop:
+        - { key: "net.bridge.bridge-nf-call-iptables", value: "1" }
+        - { key: "net.bridge.bridge-nf-call-ip6tables", value: "1" }
+        - { key: "net.ipv4.ip_forward", value: "1" }
+
+    - name: Ensure net.ipv4.ip_forward is set to 1
+      sysctl:
+        name: net.ipv4.ip_forward
+        value: '1'
+        state: present
+        reload: yes
+
+    - name: Install packages to allow apt to use a repository over HTTPS
+      apt:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - gpg
+        state: present
+        update_cache: yes
+
+    - name: Ensure download directory exists
+      ansible.builtin.file:
+        path: "/etc/apt/keyrings"
+        state: directory
+        mode: '0755'
+    
+    - name: Execute gpg --dearmor
+      ansible.builtin.shell: |
+        curl -fsSL https://pkgs.k8s.io/core:/stable:/{{ kubernetes_version }}/deb/Release.key | gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+      args:
+        creates: /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+
+    - name: Add Kubernetes apt repository
+      ansible.builtin.lineinfile:
+        path: /etc/apt/sources.list.d/kubernetes.list
+        line: 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/{{ kubernetes_version }}/deb/ /'
+        create: yes
+
+    - name: Install kubelet, kubeadm, and kubectl
+      apt:
+        name:
+          - kubelet
+          - kubeadm
+          - kubectl
+        state: present
+        update_cache: yes
+
+    - name: Hold back kubelet, kubeadm, and kubectl
+      command: apt-mark hold kubelet kubeadm kubectl
+
+    - name: Update and upgrade all packages to the latest version
+      apt:
+        upgrade: 'yes'
+        update_cache: yes
