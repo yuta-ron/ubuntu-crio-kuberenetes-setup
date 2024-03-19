@@ -4,7 +4,7 @@ metadata:
   name: alertmanager
   annotations:
     storageclass.kubernetes.io/is-default-class: "false"
-provisioner: csi-driver.example-vendor.example
+provisioner: kubernetes.io/no-provisioner
 reclaimPolicy: Retain # default value is Delete
 allowVolumeExpansion: true
 mountOptions:
@@ -19,7 +19,7 @@ metadata:
   name: prometheus-server
   annotations:
     storageclass.kubernetes.io/is-default-class: "false"
-provisioner: csi-driver.example-vendor.example
+provisioner: kubernetes.io/no-provisioner
 reclaimPolicy: Retain # default value is Delete
 allowVolumeExpansion: true
 mountOptions:
@@ -27,19 +27,3 @@ mountOptions:
 volumeBindingMode: WaitForFirstConsumer
 parameters:
   guaranteedReadWriteLatency: "true"
-
-
-
-apiVersion: storage.k8s.io/v1
-kind: StorageClass
-metadata:
-  name: alertmanager
-provisioner: kubernetes.io/no-provisioner
-volumeBindingMode: WaitForFirstConsumer
----
-apiVersion: storage.k8s.io/v1
-kind: StorageClass
-metadata:
-  name: prometheus-server
-provisioner: kubernetes.io/no-provisioner
-volumeBindingMode: WaitForFirstConsumer
