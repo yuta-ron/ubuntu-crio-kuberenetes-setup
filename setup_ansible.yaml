@@ -134,6 +134,25 @@
     - name: Hold back kubelet, kubeadm, and kubectl
       command: apt-mark hold kubelet kubeadm kubectl
 
+    - name: Replace crio.conf
+      copy:
+        src: ./kubelet
+        dest: /etc/default/kubelet
+
+    - name: Reload systemd daemon
+      ansible.builtin.systemd:
+        daemon_reload: yes
+
+    - name: Restart crio service
+      ansible.builtin.systemd:
+        name: crio
+        state: restarted
+
+    - name: Restart kubelet service
+      ansible.builtin.systemd:
+        name: kubelet
+        state: restarted
+
     - name: Update and upgrade all packages to the latest version
       apt:
         upgrade: 'yes'
