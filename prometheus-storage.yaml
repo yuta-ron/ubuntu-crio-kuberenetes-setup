@@ -2,6 +2,38 @@ apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
   name: alertmanager
+  annotations:
+    storageclass.kubernetes.io/is-default-class: "false"
+provisioner: csi-driver.example-vendor.example
+reclaimPolicy: Retain # default value is Delete
+allowVolumeExpansion: true
+mountOptions:
+  - discard # this might enable UNMAP / TRIM at the block storage layer
+volumeBindingMode: WaitForFirstConsumer
+parameters:
+  guaranteedReadWriteLatency: "true"
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: prometheus-server
+  annotations:
+    storageclass.kubernetes.io/is-default-class: "false"
+provisioner: csi-driver.example-vendor.example
+reclaimPolicy: Retain # default value is Delete
+allowVolumeExpansion: true
+mountOptions:
+  - discard # this might enable UNMAP / TRIM at the block storage layer
+volumeBindingMode: WaitForFirstConsumer
+parameters:
+  guaranteedReadWriteLatency: "true"
+
+
+
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: alertmanager
 provisioner: kubernetes.io/no-provisioner
 volumeBindingMode: WaitForFirstConsumer
 ---

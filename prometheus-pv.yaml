@@ -1,27 +1,45 @@
-kind: PersistentVolume
 apiVersion: v1
+kind: PersistentVolume
 metadata:
   name: prometheus-alertmanager
 spec:
   capacity:
     storage: 2Gi
+  volumeMode: Filesystem
   accessModes:
-    - ReadWriteOnce
-  persistentVolumeReclaimPolicy: Recycle
+  - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Delete
   storageClassName: alertmanager
   local:
     path: /mnt/share/nfs/prometheus/alertmanager
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - prometheus-alertmanager
 ---
-kind: PersistentVolume
 apiVersion: v1
+kind: PersistentVolume
 metadata:
   name: prometheus-server
 spec:
   capacity:
     storage: 2Gi
+  volumeMode: Filesystem
   accessModes:
-    - ReadWriteOnce
-  persistentVolumeReclaimPolicy: Recycle
+  - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Delete
   storageClassName: prometheus-server
   local:
     path: /mnt/share/nfs/prometheus/server
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - prometheus-server
