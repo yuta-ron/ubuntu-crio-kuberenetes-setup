@@ -466,7 +466,7 @@ server:
 
     ## Prometheus server data Persistent Volume size
     ##
-    size: 8Gi
+    size: 1Gi
 
     ## Prometheus server data Persistent Volume Storage Class
     ## If defined, storageClassName: <storageClass>
@@ -475,7 +475,7 @@ server:
     ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
     ##   GKE, AWS & OpenStack)
     ##
-    # storageClass: "-"
+    storageClass: "prometheus-server"
 
     ## Prometheus server data Persistent Volume Binding Mode
     ## If defined, volumeBindingMode: <volumeBindingMode>
@@ -502,7 +502,7 @@ server:
     ## Persistent Volume Name
     ## Useful if Persistent Volumes have been provisioned in advance and you want to use a specific one
     ##
-    # volumeName: ""
+    volumeName: "prometheus-server"
 
   emptyDir:
     ## Prometheus server emptyDir volume size limit
@@ -1226,7 +1226,7 @@ alertmanager:
   enabled: true
 
   persistence:
-    size: 2Gi
+    size: 1Gi
 
   podSecurityContext:
     runAsUser: 65534

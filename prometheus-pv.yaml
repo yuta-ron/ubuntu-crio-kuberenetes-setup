@@ -4,7 +4,7 @@ metadata:
   name: prometheus-alertmanager
 spec:
   capacity:
-    storage: 1Gi
+    storage: 2Gi
   accessModes:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Recycle
@@ -19,7 +19,7 @@ metadata:
   name: prometheus-server
 spec:
   capacity:
-    storage: 1Gi
+    storage: 2Gi
   accessModes:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Recycle
