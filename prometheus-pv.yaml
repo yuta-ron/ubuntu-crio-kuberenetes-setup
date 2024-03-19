@@ -9,21 +9,20 @@ spec:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Recycle
   storageClassName: alertmanager
-  nfs:
-    server: kinako.local
+  local:
     path: /mnt/share/nfs/prometheus/alertmanager
----
-kind: PersistentVolume
-apiVersion: v1
-metadata:
-  name: prometheus-server
-spec:
-  capacity:
-    storage: 2Gi
-  accessModes:
-    - ReadWriteOnce
-  persistentVolumeReclaimPolicy: Recycle
-  storageClassName: prometheus-server
-  nfs:
-    server: kinako.local
-    path: /mnt/share/nfs/prometheus/server
+# ---
+# kind: PersistentVolume
+# apiVersion: v1
+# metadata:
+#   name: prometheus-server
+# spec:
+#   capacity:
+#     storage: 2Gi
+#   accessModes:
+#     - ReadWriteOnce
+#   persistentVolumeReclaimPolicy: Recycle
+#   storageClassName: prometheus-server
+#   nfs:
+#     server: kinako.local
+#     path: /mnt/share/nfs/prometheus/server
