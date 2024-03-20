@@ -32,15 +32,26 @@ sudo kubeadm init --cri-socket=/var/run/crio/crio.sock --pod-network-cidr=10.85.
 mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
+```
+
+workernode
+```
+./workernode_setup.bash
 
 # Execute following command at workernode
 # Specify IP Address of controlplane.
 # "hostname.local" is not acceptable.
 # sudo kubeadm join 192.168.0.1:6443 --certificate-key xxxxxx ...
+
 ```
 
 ### Monitoring (Prometheus, Grafana)
 ```
+# SetUp
+./monitoring_setup.bash
+
+# Delete
+./monitoring_delete.bash
 ```
 
 # Appendix 

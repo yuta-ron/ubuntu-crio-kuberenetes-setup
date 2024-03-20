@@ -1,0 +1,12 @@
+- name: WorkerNode Setup
+  hosts: localhost
+  connection: local
+  become: yes
+  vars:
+    os: "xUbuntu_22.04"
+    crio_version: "1.24"
+    kubernetes_version: "v1.29"
+
+  tasks:
+    - name: CommonTask
+      import_tasks: common_tasks.yaml
