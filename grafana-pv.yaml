@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: grafana
+spec:
+  capacity:
+    storage: 2Gi
+  volumeMode: Filesystem
+  accessModes:
+  - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Delete
+  storageClassName: grafana
+  local:
+    # nodeSelectorTerms で指定したノードのディレクトリを指定
+    path: /mnt/localk8s/grafana
+  # https://github.com/kubernetes/kubernetes/issues/123465#issuecomment-1961716878
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - anzu
