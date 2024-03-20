@@ -1224,8 +1224,8 @@ alertmanager:
   ## If false, alertmanager will not be installed
   ##
   enabled: true
-
   persistence:
+    storageClass: "alertmanager"
     size: 1Gi
 
   podSecurityContext:
