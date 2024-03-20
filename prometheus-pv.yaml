@@ -12,6 +12,7 @@ spec:
   storageClassName: alertmanager
   local:
     path: /mnt/share/nfs/prometheus/alertmanager
+  # https://github.com/kubernetes/kubernetes/issues/123465#issuecomment-1961716878
   nodeAffinity:
     required:
       nodeSelectorTerms:
@@ -41,5 +42,6 @@ spec:
       - matchExpressions:
         - key: kubernetes.io/hostname
           operator: In
+          # specify node name
           values:
-          - prometheus-server
+          - anzu
