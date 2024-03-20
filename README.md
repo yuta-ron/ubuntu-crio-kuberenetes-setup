@@ -50,6 +50,9 @@ workernode
 # SetUp
 ./monitoring_setup.bash
 
+# Retrieve Password
+kubectl get secret --namespace monitoring grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
+
 # Delete
 ./monitoring_delete.bash
 ```
