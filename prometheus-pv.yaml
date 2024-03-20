@@ -11,7 +11,8 @@ spec:
   persistentVolumeReclaimPolicy: Delete
   storageClassName: alertmanager
   local:
-    path: /mnt/share/nfs/prometheus/alertmanager
+    # nodeSelectorTerms で指定したノードのディレクトリを指定
+    path: /mnt/localk8s/prometheus/alertmanager
   # https://github.com/kubernetes/kubernetes/issues/123465#issuecomment-1961716878
   nodeAffinity:
     required:
@@ -20,7 +21,7 @@ spec:
         - key: kubernetes.io/hostname
           operator: In
           values:
-          - prometheus-alertmanager
+          - anzu
 ---
 apiVersion: v1
 kind: PersistentVolume
@@ -35,7 +36,8 @@ spec:
   persistentVolumeReclaimPolicy: Delete
   storageClassName: prometheus-server
   local:
-    path: /mnt/share/nfs/prometheus/server
+    # nodeSelectorTerms で指定したノードのディレクトリを指定
+    path: /mnt/localk8s/prometheus/server
   nodeAffinity:
     required:
       nodeSelectorTerms:
