@@ -1223,7 +1223,7 @@ extraManifests: []
 alertmanager:
   ## If false, alertmanager will not be installed
   ##
-  enabled: true
+  enabled: false
   persistence:
     storageClass: "alertmanager"
     size: 1Gi
