@@ -356,7 +356,7 @@ extraContainerVolumes: []
 persistence:
   type: pvc
   enabled: true
-  # storageClassName: default
+  storageClassName: "grafana"
   accessModes:
     - ReadWriteOnce
   size: 1Gi
