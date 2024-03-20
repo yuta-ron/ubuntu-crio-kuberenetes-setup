@@ -1,6 +1,6 @@
-# Outline
+# Summary
 
-I am trying to build a k8s cluster using a Raspberry Pi, both for my own training and to satisfy my curiosity.
+I'm trying to build a k8s cluster using a Raspberry Pi, both for my own training and to satisfy my curiosity.
 This repository also purpose as a note to myself.
 
 The following list is host information.
@@ -12,21 +12,38 @@ The following list is host information.
 
 Please run following commands before run ansible.
 
+# Setup
+
+### Kubernetes
+
+controlplane
 ```bash
-sudo update-alternatives --config editor 
-# Select prefer editor
+git clone git@github.com:yuta-ron/ubuntu-crio-kuberenetes-setup.git
+cd ubuntu-crio-kubernetes-setup
 
-sudo apt purge needrestart -y
-sudo apt install ansible -y
+./controlplane_setup.bash
 
-ansible-playbook setup.yaml --syntax-check
-ansible-playbook setup.yaml --ask-become-pass
+# Execute following command at controlplane.
+# Specify IP Address of controlplane. 
+# (Failures when specify other address)
+ip_address=$(hostname -I | awk '{print $1}')
+sudo kubeadm init --cri-socket=/var/run/crio/crio.sock --pod-network-cidr=10.85.0.0/16 --control-plane-endpoint="$ip_address" --kubernetes-version 1.29.2
 
-# If want to set up as controlplane.
-# sudo kubeadm init --cri-socket=‘’/var/run/crio/crio.sock --pod-network-cidr=10.1.0.0/16 --control-plane-endpoint=(host_name).local --kubernetes-version 1.29.2
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+# Execute following command at workernode
+# Specify IP Address of controlplane.
+# "hostname.local" is not acceptable.
+# sudo kubeadm join 192.168.0.1:6443 --certificate-key xxxxxx ...
 ```
 
-# memo 
+### Monitoring (Prometheus, Grafana)
+```
+```
+
+# Appendix 
 crio.conf was slightly modified.
 
 ```diff
@@ -45,3 +62,4 @@ plugin_dirs = [
 +	"/usr/lib/cni/",
 ]
 ```
+
