@@ -1,4 +1,5 @@
 # Summary
+<img src="https://github.com/yuta-ron/ubuntu-crio-kuberenetes-setup/assets/18624396/a13caa53-b843-4fc2-84fb-316995c285b8" width="320px">
 
 I'm trying to build a k8s cluster using a Raspberry Pi, both for my own training and to satisfy my curiosity.
 This repository also purpose as a note to myself.
