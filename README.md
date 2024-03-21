@@ -10,8 +10,6 @@ The following list is host information.
 | Raspberry Pi 4 ModelB  | Ubuntu 22.04.4 | 8GB    | 1.29.2  | 1.24      | 
 |                        |                |        |         |           | 
 
-Please run following commands before run ansible.
-
 # Setup
 
 ### Kubernetes
