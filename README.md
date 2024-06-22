@@ -26,7 +26,7 @@ cd ubuntu-crio-kubernetes-setup
 # Specify IP Address of controlplane. 
 # (Failures when specify other address)
 ip_address=$(hostname -I | awk '{print $1}')
-sudo kubeadm init --cri-socket=/var/run/crio/crio.sock --pod-network-cidr=10.85.0.0/16 --control-plane-endpoint="$ip_address" --kubernetes-version 1.29.2
+sudo kubeadm init --cri-socket=/var/run/crio/crio.sock --pod-network-cidr=10.85.0.0/16 --control-plane-endpoint="$ip_address" --kubernetes-version 1.30.2
 
 mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
