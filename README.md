@@ -76,3 +76,12 @@ plugin_dirs = [
 ]
 ```
 
+kubectl create ns ingress-nginx
+
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+helm install ingress-nginx ingress-nginx/ingress-nginx --set controller.publishService.enabled=true --version 4.10.0 -n ingress-nginx
+
+kubectl delete -A ValidatingWebhookConfiguration ingress-nginx-admission -ningress-nginx
+kubectl apply -f ingress.yaml -ningress-nginx
+
+kubectl edit svc ingress-nginx-controller -n ingress-nginx

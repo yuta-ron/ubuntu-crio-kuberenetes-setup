@@ -1,19 +1,19 @@
-apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nginx-deployment
+  name: web-server
 spec:
+  replicas: 3
   selector:
     matchLabels:
-      app: nginx
-  replicas: 20 # tells deployment to run 2 pods matching the template
+      app: web-server
   template:
     metadata:
       labels:
-        app: nginx
+        app: web-server
     spec:
       containers:
       - name: nginx
-        image: nginx:1.14.2
+        image: nginx:latest
         ports:
         - containerPort: 80
