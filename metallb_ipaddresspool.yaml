@@ -5,4 +5,4 @@ metadata:
   name: example-address-pool
 spec:
   addresses:
-  - 192.168.10.1-192.168.10.254
+  - 10.85.0.0/16
