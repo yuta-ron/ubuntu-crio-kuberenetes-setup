@@ -51,15 +51,15 @@
         state: started
         enabled: yes
 
-    - name: Install cri-tools
-      apt:
-        name: cri-tools
-        state: present
+    # - name: Install cri-tools
+    #   apt:
+    #     name: cri-tools
+    #     state: present
 
-    - name: Set up crictl auto-completion
-      shell: crictl completion | sudo tee /etc/bash_completion.d/crictl
-      args:
-        executable: /bin/bash
+    # - name: Set up crictl auto-completion
+    #   shell: crictl completion | sudo tee /etc/bash_completion.d/crictl
+    #   args:
+    #     executable: /bin/bash
 
     - name: Add modules to /etc/modules-load.d/k8s.conf
       blockinfile:
