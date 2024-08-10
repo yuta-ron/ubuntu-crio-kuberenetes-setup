@@ -31,7 +31,7 @@
       apt:
         name:
           - cri-o
-          - cri-o-runc
+          # - cri-o-runc
         state: present
         update_cache: yes
 
