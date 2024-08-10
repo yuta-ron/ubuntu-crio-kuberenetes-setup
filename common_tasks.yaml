@@ -27,7 +27,7 @@
         create: yes
 
 # ---
-    - name: Install cri-o and cri-o-runc
+    - name: Install cri-o
       apt:
         name:
           - cri-o
