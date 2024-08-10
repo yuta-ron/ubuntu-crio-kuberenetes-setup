@@ -1,19 +1,32 @@
-    - name: Add CRI-O repository keys
-      apt_key:
-        url: "{{ item }}"
-        state: present
-      loop:
-        - "https://download.opensuse.org/repositories/devel:kubic:libcontainers:stable:cri-o:{{ crio_version }}/{{ os }}/Release.key"
-        - "https://download.opensuse.org/repositories/devel:kubic:libcontainers:stable/{{ os }}/Release.key"
+    # - name: Add CRI-O repository keys
+    #   apt_key:
+    #     url: "{{ item }}"
+    #     state: present
+    #   loop:
+    #     - "https://download.opensuse.org/repositories/devel:kubic:libcontainers:stable:cri-o:{{ crio_version }}/{{ os }}/Release.key"
+    #     - "https://download.opensuse.org/repositories/devel:kubic:libcontainers:stable/{{ os }}/Release.key"
 
-    - name: Add CRI-O repositories
-      apt_repository:
-        repo: "{{ item }}"
-        state: present
-      loop:
-        - "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/{{ os }}/ /"
-        - "deb http://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/{{ crio_version }}/{{ os }}/ /"
+    # - name: Add CRI-O repositories
+    #   apt_repository:
+    #     repo: "{{ item }}"
+    #     state: present
+    #   loop:
+    #     - "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/{{ os }}/ /"
+    #     - "deb http://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/{{ crio_version }}/{{ os }}/ /"
+# ----
+    - name: Execute gpg --dearmor
+      ansible.builtin.shell: |
+        curl -fsSL https://pkgs.k8s.io/addons:/cri-o:/stable:/{{ crio_version }}/deb/Release.key | gpg --dearmor -o /etc/apt/keyrings/cri-o-apt-keyring.gpg
+      args:
+        creates: /etc/apt/keyrings/cri-o-apt-keyring.gpg
 
+    - name: Add CRI-O apt repository
+      ansible.builtin.lineinfile:
+        path: /etc/apt/sources.list.d/cri-o.list
+        line: 'deb [signed-by=/etc/apt/keyrings/cri-o-apt-keyring.gpg] https://pkgs.k8s.io/addons:/cri-o:/stable:/{{ crio_version }}/deb/ /'
+        create: yes
+
+# ---
     - name: Install cri-o and cri-o-runc
       apt:
         name:

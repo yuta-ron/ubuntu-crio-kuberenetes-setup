@@ -4,7 +4,7 @@
   become: yes
   vars:
     os: "xUbuntu_22.04"
-    crio_version: "1.30.4"
+    crio_version: "v1.30"
     kubernetes_version: "v1.30"
 
   tasks:
