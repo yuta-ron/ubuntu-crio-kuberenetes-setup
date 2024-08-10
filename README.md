@@ -33,7 +33,7 @@ sudo systemctl restart kubelet
 ip_address=$(hostname -I | awk '{print $1}')
 
 # --pod-network-cidr: https://github.com/cri-o/cri-o/blob/main/tutorials/kubeadm.md
-sudo kubeadm init --config kubeadm-config.yaml --cri-socket=/var/run/crio/crio.sock --pod-network-cidr=10.244.0.0/16 --control-plane-endpoint="$ip_address" --kubernetes-version 1.30.3 --cgroup-driver=cgroupfs
+sudo kubeadm init --cri-socket=/var/run/crio/crio.sock --pod-network-cidr=10.244.0.0/16 --control-plane-endpoint="$ip_address" --kubernetes-version 1.30.3
 
 mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
