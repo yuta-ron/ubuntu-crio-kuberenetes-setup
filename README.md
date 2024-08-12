@@ -38,7 +38,12 @@ sudo kubeadm init --cri-socket=/var/run/crio/crio.sock --pod-network-cidr=10.244
 mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+kubectl apply -f https://github.com/flannel-io/flannel/releases/latest/download/kube-flannel.yml
 ```
+
+sudo cp -i $HOME/.kube/config /etc/kubernetes/admin.conf
+sudo rm -rf /etc/kubernetes/admin.conf
 
 workernode
 ```
@@ -92,3 +97,16 @@ kubectl delete -A ValidatingWebhookConfiguration ingress-nginx-admission -ningre
 kubectl apply -f ingress.yaml -ningress-nginx
 
 kubectl edit svc ingress-nginx-controller -n ingress-nginx
+
+
+
+---
+wget https://github.com/cloudflare/cloudflared/releases/download/2024.8.2/cloudflared-linux-arm64.deb
+sudo apt install ./cloudflared-linux-arm64.deb
+cloudflared tunnel logi
+
+
+インターネットから繋ぐ
+helm repo add nginx-stable https://helm.nginx.com/stable
+helm repo update
+helm install nginx-ingress nginx-stable/nginx-ingress

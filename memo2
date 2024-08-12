@@ -1,0 +1,82 @@
+kubectl create token coredns -n kube-system
+kubectl delete pod -l k8s-app=kube-dns -n kube-system
+
+
+
+kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+
+------------------------------------------------------------------------------
+
+kubectl edit configmap -n kube-flannel kube-flannel-cfg
+net-conf.json: |
+  {
+    "Network": "10.244.0.0/16",
+    "EnableNFTables": false,
+    "Backend": {
+      "Type": "vxlan"
+    }
+  }
+
+  ↑NodeのPodCIDRに合わせる
+
+  kubectl delete pod -n kube-flannel -l app=flannel
+
+
+------
+kubectl run test-pod --image=busybox --restart=Never -- sleep 3600
+kubectl exec -it test-pod -- ping -c 4 10.96.0.1
+kubectl exec -it test-pod -- wget --spider https://10.96.0.1:443
+kubectl delete pod test-pod
+
+
+------
+
+kubectl create token coredns -n kube-system
+kubectl create secret generic coredns-token --from-literal=token=<your-generated-token> -n kube-system
+kubectl patch serviceaccount coredns -n kube-system -p '{"secrets": [{"name": "coredns-token"}]}'
+kubectl delete pod -l k8s-app=kube-dns -n kube-system
+
+------
+
+kubectl get events -n kube-system
+
+
+https://kubernetes.io/docs/setup/production-environment/container-runtimes/#cri-o
+
+https://shape.host/resources/cri-o-container-runtime-installation-guide-ubuntu-22-04
+
+------
+# ワーカーノードのアップデート
+# https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/upgrading-linux-nodes/
+# https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/upgrading-linux-nodes/
+
+sudo apt-mark unhold kubeadm && \
+sudo apt-get update && sudo apt-get install -y kubeadm='1.30.3-*' && \
+sudo apt-mark hold kubeadm
+
+sudo kubeadm upgrade node
+
+# drainする
+kubectl drain omochi anzu kurumi --ignore-daemonsets
+
+sudo apt-mark unhold kubelet kubectl && \
+sudo apt-get update && sudo apt-get install -y kubelet='1.30.3-*' kubectl='1.30.3-*' && \
+sudo apt-mark hold kubelet kubectl
+
+sudo systemctl daemon-reload && \
+sudo systemctl restart kubelet
+
+kubectl uncordon omochi anzu kurumi
+
+
+
+
+
+
+
+
+
+
+
+sudo kubeadm join 192.168.10.1:6443 --token 0bxn1x.ebcuanuicm782k8o \
+--discovery-token-ca-cert-hash sha256:d375dd0ce0398362bc95dace01d38b05d854ca1b261f4fd019f7baaee335521d

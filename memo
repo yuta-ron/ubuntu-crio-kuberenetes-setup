@@ -1,0 +1,45 @@
+kubectl get nodes -o jsonpath='{.items[*].spec.podCIDR}'
+# 10.85.0.0/16
+kubectl create ns kube-flannel
+kubectl label --overwrite ns kube-flannel pod-security.kubernetes.io/enforce=privileged
+helm repo add flannel https://flannel-io.github.io/flannel/
+helm install flannel --set podCidr="10.85.0.0/16" --namespace kube-flannel flannel/flannel
+
+
+kubectl delete secret metallb-webhook-cert -n metallb-system
+kubectl create secret generic memberlist -n metallb-system --from-literal=secretkey="$(openssl rand -base64 128)"
+kubectl create secret tls metallb-webhook-cert --cert=webhook-server-tls.crt --key=webhook-server-tls.key -n metallb-system
+
+
+kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.14.5/config/manifests/metallb-native.yaml
+kubectl delete -f https://raw.githubusercontent.com/metallb/metallb/v0.14.5/config/manifests/metallb-native.yaml
+
+helm repo add metallb https://metallb.github.io/metallb
+helm install metallb metallb/metallb -n metallb-system --create-namespace
+helm uninstall metallb
+
+kubectl apply -f metallb_ipaddresspool.yaml -n metallb-system
+kubectl apply -f metallb_l2advertisement.yaml  -n metallb-system
+
+
+
+
+# helmでNginx Ingress Controllerを立てる
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+helm repo update
+
+helm install nginx-ingress ingress-nginx/ingress-nginx --namespace ingress-nginx --create-namespace
+
+helm uninstall nginx-ingress -n ingress-nginx
+kubectl delete -f https://raw.githubusercontent.com/metallb/metallb/v0.13.7/config/manifests/metallb-native.yaml
+
+
+
+kubectl apply -f nginx-deployment.yaml
+kubectl apply -f nginx-service.yaml
+kubectl apply -f nginx-ingress.yaml
+
+
+kubectl delete -f nginx-deployment.yaml
+kubectl delete -f nginx-service.yaml
+kubectl delete -f nginx-ingress.yaml
