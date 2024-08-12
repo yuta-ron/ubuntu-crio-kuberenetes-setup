@@ -87,26 +87,3 @@ plugin_dirs = [
 +	"/usr/lib/cni/",
 ]
 ```
-
-kubectl create ns ingress-nginx
-
-helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-helm install ingress-nginx ingress-nginx/ingress-nginx --set controller.publishService.enabled=true --version 4.10.0 -n ingress-nginx
-
-kubectl delete -A ValidatingWebhookConfiguration ingress-nginx-admission -ningress-nginx
-kubectl apply -f ingress.yaml -ningress-nginx
-
-kubectl edit svc ingress-nginx-controller -n ingress-nginx
-
-
-
----
-wget https://github.com/cloudflare/cloudflared/releases/download/2024.8.2/cloudflared-linux-arm64.deb
-sudo apt install ./cloudflared-linux-arm64.deb
-cloudflared tunnel logi
-
-
-インターネットから繋ぐ
-helm repo add nginx-stable https://helm.nginx.com/stable
-helm repo update
-helm install nginx-ingress nginx-stable/nginx-ingress

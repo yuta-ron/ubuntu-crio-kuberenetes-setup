@@ -80,3 +80,35 @@ kubectl uncordon omochi anzu kurumi
 
 sudo kubeadm join 192.168.10.1:6443 --token 0bxn1x.ebcuanuicm782k8o \
 --discovery-token-ca-cert-hash sha256:d375dd0ce0398362bc95dace01d38b05d854ca1b261f4fd019f7baaee335521d
+
+
+--------------
+kubectl create ns ingress-nginx
+
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+helm install ingress-nginx ingress-nginx/ingress-nginx --set controller.publishService.enabled=true --version 4.10.0 -n ingress-nginx
+
+kubectl delete -A ValidatingWebhookConfiguration ingress-nginx-admission -ningress-nginx
+kubectl apply -f ingress.yaml -ningress-nginx
+
+kubectl edit svc ingress-nginx-controller -n ingress-nginx
+
+
+
+---
+wget https://github.com/cloudflare/cloudflared/releases/download/2024.8.2/cloudflared-linux-arm64.deb
+sudo apt install ./cloudflared-linux-arm64.deb
+cloudflared tunnel logi
+
+
+インターネットから繋ぐ
+helm repo add nginx-stable https://helm.nginx.com/stable
+helm repo update
+helm install nginx-ingress nginx-stable/nginx-ingress
+
+
+kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.14.8/config/manifests/metallb-native.yaml
+
+> Layer 2 configuration
+https://metallb.universe.tf/configuration/
+
