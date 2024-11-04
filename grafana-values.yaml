@@ -212,7 +212,7 @@ gossipPortName: gossip
 ##
 service:
   enabled: true
-  type: NodePort
+  type: LoadBalancer 
   loadBalancerIP: ""
   loadBalancerClass: ""
   loadBalancerSourceRanges: []
