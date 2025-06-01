@@ -52,7 +52,8 @@ workernode
 # Execute following command at workernode
 # Specify IP Address of controlplane.
 # "hostname.local" is not acceptable.
-sudo kubeadm join 192.168.0.1:6443 --certificate-key xxxxxx ...
+sudo kubeadm join 192.168.10.1:6443 --token xxxx \
+	--discovery-token-ca-cert-hash sha256:xxx
 
 ```
 
